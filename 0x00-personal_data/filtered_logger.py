@@ -29,3 +29,16 @@ def filter_datum(fields: List[str], redaction: str,
     """ Obfuscate fileds inside a message """
     field = '|'.join(fields)
     return re.sub(fr'({field})=[^{separator}]*', fr'\1={redaction}', message)
+
+
+def get_logger() -> logging.Logger:
+    """Create a logging.Logger object"""
+    logger = logging.getLogger("user_data")
+    logger.propagate = False
+    logger.setLevel(logging.INFO)
+
+    sh = logging.StreamHandler()
+    sh.setFormatter(RedactingFormatter(list(PII_FIELDS)))
+    logger.addHandler(sh)
+
+    return logger
